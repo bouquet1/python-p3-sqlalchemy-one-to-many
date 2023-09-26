@@ -5,7 +5,7 @@
 - Use SQLAlchemy to join tables with one-to-one, one-to-many, and
   many-to-many relationships.
 
-***
+---
 
 ## Introduction
 
@@ -24,7 +24,7 @@ Before we begin, run `pipenv install; pipenv shell` to generate and enter
 your virtual environment. This will install `sqlalchemy`, `alembic`, `faker`,
 `pytest`, and `ipdb`.
 
-***
+---
 
 ## How do we use SQLAlchemy Relationships?
 
@@ -94,7 +94,7 @@ class OrderMetadata(Base):
 
     id = Column(Integer(), primary_key=True)
     order_id = Column(Integer(), ForeignKey("orders.id"))
-    
+
     order = relationship('Order',
         backref=backref('order_metadata', uselist=False))
 ```
@@ -106,7 +106,7 @@ sounds like: the `Order` model refers back to the `OrderMetadata` model via a
 property `order_metadata` that is not a list. (If it were a list, it would be
 many!)
 
-***
+---
 
 ## Overview
 
@@ -124,7 +124,7 @@ Here's what our Entity Relationship Diagram (ERD) looks like:
 
 ![Game Reviews ERD](https://curriculum-content.s3.amazonaws.com/phase-3/active-record-associations-one-to-many/games-reviews-erd.png)
 
-***
+---
 
 ## Building our Migrations
 
@@ -134,9 +134,9 @@ A game will _have many_ reviews. Before we worry about the migration that will
 implement this in our reviews table, let's think about what that table will look
 like:
 
-|  id  |     title     |  platform  |  platform   | price |
-| --------- | ------------------ | --------------- | ---------------- | ---------- |
-|     1     | Breath of the Wild |      Switch     | Action-adventure |     60     |
+| id  | title              | platform | platform         | price |
+| --- | ------------------ | -------- | ---------------- | ----- |
+| 1   | Breath of the Wild | Switch   | Action-adventure | 60    |
 
 Our games table doesn't need any information about the reviews, so it makes
 sense to generate this table first: it doesn't have any dependencies on another
@@ -192,6 +192,7 @@ Just remember that alterations to tables require `render_as_batch=True` in
 `env.py` from the start of your first migration.
 
 Run `alembic upgrade head` to create your database.
+(I got an error "FAILED: No config file 'alembic.ini' found, or file has no '[alembic]' section" becasue I didn't cd into the directory that has the alembic.ini)
 
 Navigate to `lib/models.py` and build a basic model for the `games` table:
 
@@ -251,9 +252,9 @@ belongs to.
 
 Let's take a look at what our `reviews` table will need to look like:
 
-| id  | score | comment | id |
-| ---------- | ------------ | -------------- | ------- |
-|     1      |      10      |   A classic!   |    1    |
+| id  | score | comment    | id  |
+| --- | ----- | ---------- | --- |
+| 1   | 10    | A classic! | 1   |
 
 Ok! Now that we know what we need to create, let's head back to `models.py`
 and write out a new model:
@@ -276,7 +277,7 @@ Make sure to add the relationship to `Game` as well:
 # models.py
 
 class Game(Base):
-    
+
     # tablename, columns
 
     reviews = relationship('Review', backref=backref('game'))
@@ -290,7 +291,7 @@ thank me later!
 # models.py
 
 class Game(Base):
-    
+
     # tablename, columns, relationship
 
     def __repr__(self):
@@ -299,7 +300,7 @@ class Game(Base):
             f'platform={self.platform})'
 
 class Review(Base):
-    
+
     # tablename, columns, relationship
 
     def __repr__(self):
@@ -335,7 +336,7 @@ Run this to fill the database with games and reviews:
 $ python seed.py
 ```
 
-***
+---
 
 ## Exploring our Relationships Using SQLAlchemy
 
@@ -400,7 +401,7 @@ game.reviews
 # => [Review(id=1, score=7, game_id=1), Review(id=2, score=7, game_id=1), Review(id=3, score=8, game_id=1)]
 ```
 
-***
+---
 
 ## Cascades
 
@@ -461,7 +462,7 @@ reviews = relationship('Review', backref=backref('game'), cascade='all, delete-o
 Our database is now configured to delete reviews when their parent games are
 deleted and when they are removed from their parent game, or orphaned.
 
-***
+---
 
 ## Conclusion
 
@@ -475,7 +476,7 @@ Python applications.
 Run `pytest -x` to make sure all of the tests are passing. In the next lesson,
 we'll explore many-to-many relationships in SQLAlchemy
 
-***
+---
 
 ## Solution Code
 
@@ -513,7 +514,7 @@ class Review(Base):
     id = Column(Integer(), primary_key=True)
     score = Column(Integer())
     comment = Column(String())
-    
+
     game_id = Column(Integer(), ForeignKey('games.id'))
 
     def __repr__(self):
@@ -523,7 +524,7 @@ class Review(Base):
 
 ```
 
-***
+---
 
 ## Resources
 
